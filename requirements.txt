@@ -6,3 +6,4 @@ psycopg2-binary
 paypalrestsdk 
 openai 
 #smtplib
+python-dotenv
