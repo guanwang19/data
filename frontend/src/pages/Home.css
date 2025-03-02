@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #e3f2fd;
+    color: #333;
+  }
+  
+  .home-container {
+    text-align: center;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    background: #0066cc;
+    padding: 10px 20px;
+    color: white;
+  }
+  
+  .nav-links a {
+    margin: 0 15px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  
+  .nav-links .cart-icon {
+    font-size: 18px;
+  }
+  
+  .signup-btn, .login-btn {
+    background: #f4b400;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  .hero {
+    padding: 50px;
+    background: linear-gradient(to right, #80d0c7, #13547a);
+    color: white;
+  }
+  
+  .hero h1 {
+    font-size: 36px;
+  }
+  
+  .hero p {
+    font-size: 18px;
+  }
+  
+  .cta-buttons .btn {
+    display: inline-block;
+    margin: 10px;
+    padding: 12px 20px;
+    background: #f4b400;
+    color: black;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  

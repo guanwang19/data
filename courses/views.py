@@ -4,7 +4,7 @@ from .serializers import CourseSerializer, VideoSerializer, UserProgressSerializ
 from django.http import HttpResponse
 
 def home(request):
-    return HttpResponse("Welcome to the Course Platform!")
+    return HttpResponse("Welcome to the Course Platform! from courses/views.py")
 
 class CourseListView(generics.ListAPIView):
     queryset = Course.objects.all()

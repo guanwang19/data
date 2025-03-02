@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from .views import home  # Import the home view
 
 urlpatterns = [
-    path("", views.home, name="home"),  # Update with a real view function
+    path("", home, name="home"),  # Root URL now loads the home page
 ]
