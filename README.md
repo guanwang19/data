@@ -12,6 +12,10 @@
             │   ├── serializers.py
             │   ├── urls.py
             │── users/
+            │   ├── tempelates
+            │   │  │── users/
+            │   │  │   ├── tempelates
+            │   ├── views.py
             │   ├── models.py
             │   ├── views.py
             │   ├── serializers.py
