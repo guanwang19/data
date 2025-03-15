@@ -59,19 +59,19 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # ✅ Point Django to the global templates folder
-        'APP_DIRS': True,  # ✅ Also look inside app-level templates directories
+        'DIRS': [BASE_DIR / 'templates'],  # ✅ Ensure this exists
+        'APP_DIRS': True,  # ✅ Django should look inside apps
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'config.context_processors.global_context',  # Add this line
             ],
         },
     },
 ]
+
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -90,5 +90,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "gaunwang19@gmail.com"  # ✅ Admin email (host)
+EMAIL_HOST_PASSWORD = "edkadtucpqzqwkyw"  # ✅ App password (DO NOT store directly in settings; use env variables)
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # ✅ This ensures the admin gets the reset email
 

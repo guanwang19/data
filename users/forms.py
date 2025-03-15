@@ -1,16 +1,19 @@
 from django import forms
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import get_user_model, authenticate  # ✅ Add authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
-User = get_user_model()  # ✅ Ensures we reference the correct user model
+User = get_user_model()  # ✅ Ensures correct user model reference
 
 class CustomUserCreationForm(UserCreationForm):
+    """Custom User Signup Form"""
+
     class Meta:
         model = User
         fields = ["email", "first_name", "last_name", "display_name", "password1", "password2"]
 
 class CustomAuthenticationForm(AuthenticationForm):
-    username = forms.EmailField(label="Email")  # ✅ Change to email (since `USERNAME_FIELD = "email"` in the model)
+    """Custom Login Form that uses Email instead of Username"""
+    username = forms.EmailField(label="Email")  # ✅ Change username field to email
 
     def clean(self):
         email = self.cleaned_data.get("username")  # `username` maps to `email`
