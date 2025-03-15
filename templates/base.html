@@ -1,4 +1,13 @@
 {% load static %}  {# ✅ Add this at the top #}
+<!-- base.html -->
+{% if user.is_authenticated %}
+    <li><a href="{% url 'cart:cart_detail' %}"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+    <li><a href="{% url 'users:signout' %}">Logout</a></li>
+{% else %}
+    <li><a href="{% url 'users:signup' %}">Sign Up</a></li>
+    <li><a href="{% url 'users:signin' %}">Sign In</a></li>
+{% endif %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
