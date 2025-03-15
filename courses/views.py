@@ -1,19 +1,11 @@
-from rest_framework import generics
-from .models import Course, Video, UserProgress
-from .serializers import CourseSerializer, VideoSerializer, UserProgressSerializer
-from django.http import HttpResponse
+from django.shortcuts import render
+from .models import Course
 
-def home(request):
-    return HttpResponse("Welcome to the Course Platform! from courses/views.py")
+def course_list(request):
+    courses = Course.objects.all()
+    return render(request, "courses/course_list.html", {"courses": courses})
 
-class CourseListView(generics.ListAPIView):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+def course_detail(request, course_id):
+    course = Course.objects.get(id=course_id)
+    return render(request, "courses/course_detail.html", {"course": course})
 
-class VideoListView(generics.ListAPIView):
-    queryset = Video.objects.all()
-    serializer_class = VideoSerializer
-
-class UserProgressView(generics.RetrieveAPIView):
-    queryset = UserProgress.objects.all()
-    serializer_class = UserProgressSerializer

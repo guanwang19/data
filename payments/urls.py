@@ -1,7 +1,10 @@
 from django.urls import path
-from .views import PaymentListView, PaymentDetailView
+from .views import checkout, payment_summary, download_invoice
+
+app_name = "payments"
 
 urlpatterns = [
-    path("payments/", PaymentListView.as_view(), name="payment-list"),  # List & Create payments
-    path("payments/<int:payment_id>/", PaymentDetailView.as_view(), name="payment-detail"),  # Retrieve, update, delete
+    path("checkout/", checkout, name="checkout"),
+    path("summary/", payment_summary, name="payment_summary"),
+    path("invoice/<int:payment_id>/", download_invoice, name="download_invoice"),
 ]

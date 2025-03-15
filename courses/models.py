@@ -1,5 +1,8 @@
 from django.db import models
-from users.models import User
+from django.contrib.auth import get_user_model  # ✅ Use get_user_model() to avoid circular import
+
+User = get_user_model()  # Dynamically get the User model
+
 
 class Course(models.Model):
     title = models.CharField(max_length=255)
@@ -9,6 +12,7 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Video(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -23,8 +27,9 @@ class Video(models.Model):
     def __str__(self):
         return self.title
 
+
 class UserProgress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # ✅ Now dynamically linked
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
     last_watched = models.DateTimeField(auto_now=True)
     watched_duration = models.DurationField(default="00:00:00")
@@ -37,7 +42,7 @@ class UserProgress(models.Model):
 
 
 class CourseRegistration(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # ✅ Now dynamically linked
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     registered_at = models.DateTimeField(auto_now_add=True)
 
@@ -46,3 +51,4 @@ class CourseRegistration(models.Model):
 
     def __str__(self):
         return f"{self.user.email} registered for {self.course.title}"
+

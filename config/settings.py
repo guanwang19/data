@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
+def global_context(request):
+    return {"courses": Course.objects.all()}
 # Load environment variables
 load_dotenv()
 
@@ -34,19 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Third-party apps
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'corsheaders',
-
-    # Your custom apps
+    
+    # ✅ Custom apps
     'users',
     'courses',
+    'cart',
     'payments',
-    'chatbot',
-    'support',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,19 +59,18 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # ✅ Django looks in /templates folder
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+                "django.contrib.messages.context_processors.messages",  # ✅ Always include this!
+                "config.context_processors.global_context",  # ✅ Add this line
             ],
         },
     },
 ]
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

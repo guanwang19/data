@@ -1,3 +1,119 @@
+            20250315 version of course_platform:
+            course_platform/
+│── manage.py
+│── config/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   ├── asgi.py
+│── videos/  # Directory to store video files
+│   ├── course1/
+│   │   ├── jamesdata01.mp4
+│   │   ├── jamesdata02.mp4
+│   │   └── ...
+│   ├── course2/
+│   │   ├── jamesdata01.mp4
+│   │   ├── jamesdata02.mp4
+│   │   └── ...
+│   └── ...
+├── courses/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── serializers.py
+│   ├── urls.py
+│   ├── templates/
+│   │   └── courses/
+│   │       ├── course_list.html
+│   │       ├── course_detail.html
+│   │       └── ...
+│   └── migrations/
+│       └── ...
+├── users/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── serializers.py
+│   ├── urls.py
+│   ├── templates/
+│   │   └── users/
+│   │       ├── login.html
+│   │       ├── signup.html
+│   │       └── ...
+│   └── migrations/
+│       └── ...
+├── payments/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── serializers.py
+│   ├── urls.py
+│   ├── templates/
+│   │   └── payments/
+│   │       ├── checkout.html
+│   │       ├── invoice.html
+│   │       └── ...
+│   └── migrations/
+│       └── ...
+├── cart/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── serializers.py
+│   ├── urls.py
+│   ├── templates/
+│   │   └── cart/
+│   │       ├── cart_detail.html
+│   │       └── ...
+│   └── migrations/
+│       └── ...
+├── chatbot/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── serializers.py
+│   ├── urls.py
+│   ├── templates/
+│   │   └── chatbot/
+│   │       └── ...
+│   └── migrations/
+│       └── ...
+├── support/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── serializers.py
+│   ├── urls.py
+│   ├── templates/
+│   │   └── support/
+│   │       └── ...
+│   └── migrations/
+│       └── ...
+├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       └── pages/
+│           ├── Home.js
+│           └── ...
+└── templates/
+    ├── base.html
+    └── ...
+
+            20250301 version of course_platform:
             course_platform/
             │── manage.py
             │── config/
