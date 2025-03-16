@@ -4,10 +4,10 @@
 <style>
     .course-container {
         display: flex;
-        gap: 20px;
+        gap: 10px;
     }
     .video-list {
-        width: 30%;
+        width: 20%;
         border-right: 2px solid #ddd;
         padding-right: 15px;
     }
@@ -27,7 +27,7 @@
         text-decoration: underline;
     }
     .video-player-container {
-        width: 70%;
+        width: 80%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -48,7 +48,7 @@
         <ul>
             {% for video in videos %}
                 <li>
-                    <a href="#" class="video-link" data-video-url="{{ video.video_url }}">
+                    <a href="#" class="video-link" data-video-url="{{ video.video_url }}" data-video-title="{{ video.display_name }}">
                         {{ video.display_name }} (~{{ video.duration }} mins)
                     </a>
                     <br><i>{{ video.description }}</i>
@@ -59,9 +59,11 @@
 
     <!-- Right Section: Video Player -->
     <div class="video-player-container">
-        <h3>Now Playing:</h3>
+        <h3 id="now-playing-title">
+            {{ videos.0.display_name|default:"Now Playing" }} 
+        </h3>
         <video id="video-player" controls>
-            <source id="video-source" src="" type="video/mp4">
+            <source id="video-source" src="{{ videos.0.video_url }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
@@ -75,16 +77,37 @@
         const videoLinks = document.querySelectorAll(".video-link");
         const videoPlayer = document.getElementById("video-player");
         const videoSource = document.getElementById("video-source");
+        const nowPlayingTitle = document.getElementById("now-playing-title");
+
+        // ✅ Automatically set the first video when the page loads
+        if (videoLinks.length > 0) {
+            const firstVideo = videoLinks[0];
+            const firstVideoUrl = firstVideo.getAttribute("data-video-url");
+            const firstVideoTitle = firstVideo.getAttribute("data-video-title");
+
+            if (firstVideoUrl) {
+                console.log("✅ Auto-loading first video:", firstVideoUrl);
+                videoSource.setAttribute("src", firstVideoUrl);
+                nowPlayingTitle.textContent = firstVideoTitle; // ✅ Set initial title
+                videoPlayer.load();
+            }
+        }
 
         videoLinks.forEach(link => {
             link.addEventListener("click", function(event) {
-                event.preventDefault();  // Prevent default link behavior
+                event.preventDefault();  // ✅ Prevent default link behavior
                 const videoUrl = this.getAttribute("data-video-url");
-                
+                const videoTitle = this.getAttribute("data-video-title");
+
                 if (videoUrl) {
-                    videoSource.src = videoUrl;
-                    videoPlayer.load();  // Load new video
-                    videoPlayer.play();  // Auto-play video
+                    console.log("🎬 Playing video:", videoUrl);
+                    videoPlayer.pause();
+                    videoSource.setAttribute("src", videoUrl);
+                    nowPlayingTitle.textContent = videoTitle; // ✅ Update "Now Playing"
+                    videoPlayer.load();
+                    videoPlayer.play().catch(error => console.error("⚠️ Auto-play blocked:", error));
+                } else {
+                    console.error("⚠️ Video URL is missing!");
                 }
             });
         });
@@ -92,4 +115,3 @@
 </script>
 
 {% endblock %}
-
