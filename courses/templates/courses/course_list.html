@@ -1,12 +1,16 @@
+{% extends "base.html" %}  <!-- Ensure the navbar is included -->
+
+{% block content %}
 <h2>Available Courses</h2>
 <ul>
     {% for course in courses %}
         <li>
-            <a href="{% url 'courses:course_detail' course.pk %}">
+            <a href="{% url 'courses:course_detail' course.id %}">
                 {{ course.display_name|default:course.title }}
             </a> ({{ course.total_videos }} videos)
         </li>
     {% endfor %}
 </ul>
+{% endblock %}
 
 

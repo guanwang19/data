@@ -11,6 +11,7 @@ urlpatterns = [
     path("users/", include("users.urls", namespace="users")),
     path("payments/", include("payments.urls", namespace="payments")),
     path("cart/", include("cart.urls", namespace="cart")),
+    path('', include('support.urls')), 
 ]
 
 # ✅ Serve video files in development

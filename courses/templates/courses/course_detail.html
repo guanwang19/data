@@ -4,10 +4,10 @@
 <style>
     .course-container {
         display: flex;
-        gap: 10px;
+        gap: 20px;
     }
     .video-list {
-        width: 20%;
+        width: 30%;
         border-right: 2px solid #ddd;
         padding-right: 15px;
     }
@@ -27,7 +27,7 @@
         text-decoration: underline;
     }
     .video-player-container {
-        width: 80%;
+        width: 70%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -36,37 +36,86 @@
         width: 100%;
         max-width: 800px;
     }
+    .tabs {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+    }
+    .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: bold;
+        border: 1px solid #ddd;
+        border-bottom: none;
+        background: #f8f9fa;
+        margin-right: 5px;
+    }
+    .tab.active {
+        background: white;
+        border-top: 2px solid #007bff;
+    }
+    .tab-content {
+        display: none;
+        padding: 15px;
+        border: 1px solid #ddd;
+    }
+    .tab-content.active {
+        display: block;
+    }
 </style>
 
 <h2>{{ course.display_name|default:course.title }}</h2>
 <p>{{ course.description }}</p>
 
-<div class="course-container">
-    <!-- Left Section: Video List -->
-    <div class="video-list">
-        <h3>Course Videos</h3>
-        <ul>
-            {% for video in videos %}
-                <li>
-                    <a href="#" class="video-link" data-video-url="{{ video.video_url }}" data-video-title="{{ video.display_name }}">
-                        {{ video.display_name }} (~{{ video.duration }} mins)
-                    </a>
-                    <br><i>{{ video.description }}</i>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+<!-- Tabs Menu -->
+<div class="tabs">
+    <div class="tab active" data-tab="videos">Videos</div>
+    <div class="tab" data-tab="about">About</div>
+    <div class="tab" data-tab="resources">Resources</div>
+</div>
 
-    <!-- Right Section: Video Player -->
-    <div class="video-player-container">
-        <h3 id="now-playing-title">
-            {{ videos.0.display_name|default:"Now Playing" }} 
-        </h3>
-        <video id="video-player" controls>
-            <source id="video-source" src="{{ videos.0.video_url }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+<!-- Tab Content -->
+<div id="videos" class="tab-content active">
+    <div class="course-container">
+        <!-- Left Section: Video List -->
+        <div class="video-list">
+            <h3>Course Videos</h3>
+            <ul>
+                {% for video in videos %}
+                    <li>
+                        <a href="#" class="video-link" data-video-url="{{ video.video_url }}" data-video-title="{{ video.display_name }}">
+                            {{ video.display_name }} (~{{ video.duration }} mins)
+                        </a>
+                        <br><i>{{ video.description }}</i>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Right Section: Video Player -->
+        <div class="video-player-container">
+            <h3 id="now-playing-title">
+                {{ videos.0.display_name|default:"Now Playing" }} 
+            </h3>
+            <video id="video-player" controls>
+                <source id="video-source" src="{{ videos.0.video_url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
     </div>
+</div>
+
+<!-- About Course Tab -->
+<div id="about" class="tab-content">
+    <h3>About this Course</h3>
+    <p>{{ course.description }}</p>
+</div>
+
+<!-- Resources Tab -->
+<div id="resources" class="tab-content">
+    <h3>Additional Resources</h3>
+    <p>Links to PDFs, quizzes, and external references can go here.</p>
 </div>
 
 <a href="{% url 'courses:course_list' %}" class="btn btn-primary">Back to Courses</a>
@@ -109,6 +158,20 @@
                 } else {
                     console.error("⚠️ Video URL is missing!");
                 }
+            });
+        });
+
+        // ✅ Tab Switching Logic
+        const tabs = document.querySelectorAll(".tab");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", function() {
+                tabs.forEach(t => t.classList.remove("active"));
+                tabContents.forEach(tc => tc.classList.remove("active"));
+
+                this.classList.add("active");
+                document.getElementById(this.getAttribute("data-tab")).classList.add("active");
             });
         });
     });
