@@ -61,6 +61,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],  # ✅ Ensure this exists
         'APP_DIRS': True,  # ✅ Django should look inside apps
+
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -97,6 +98,6 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "gaunwang19@gmail.com"  # ✅ Admin email (host)
-EMAIL_HOST_PASSWORD = "edkadtucpqzqwkyw"  # ✅ App password (DO NOT store directly in settings; use env variables)
+EMAIL_HOST_PASSWORD =  os.getenv("GOOGLE_APP_PASSWORD") # ✅ App password (DO NOT store directly in settings; use env variables)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # ✅ This ensures the admin gets the reset email
 CONTACT_EMAIL = "gaunwang19@gmail.com"

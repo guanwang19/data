@@ -6,6 +6,7 @@ from .forms import ContactForm
 
 def contact_success_view(request):
     return render(request, 'support/contact_success.html')
+
 def contact_view(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -27,4 +28,5 @@ def contact_view(request):
     else:
         form = ContactForm()
 
+    # Ensure template exists in support/templates/support/
     return render(request, 'support/contact.html', {'form': form})
