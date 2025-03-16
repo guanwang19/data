@@ -1,10 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate, get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
-
-User = get_user_model()  # ✅ Ensure correct user model reference
 
 def signup_view(request):
     """Handles user sign-up."""
@@ -16,7 +13,7 @@ def signup_view(request):
             user.save()
             login(request, user)
             messages.success(request, "Account created successfully! You are now logged in.")
-            return redirect("home")
+            return redirect("courses:course_list")  # ✅ Redirect to courses after signup
         else:
             messages.error(request, "Signup failed. Please correct the errors below.")
     else:
@@ -29,23 +26,23 @@ def signin_view(request):
     if request.method == "POST":
         form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            user = form.get_user()  # ✅ Get authenticated user
+            user = form.get_user()  # ✅ Get the authenticated user
             login(request, user)
             messages.success(request, f"Welcome back, {user.email}!")
 
-            # ✅ Redirect to 'next' if available, otherwise go home
-            next_url = request.GET.get("next") or "home"
-            return redirect(next_url)
+            # ✅ Redirect to courses after login
+            return redirect("courses:course_list")  # ✅ Make sure this name exists in courses/urls.py
+
         else:
             messages.error(request, "Invalid email or password.")
+
     else:
         form = CustomAuthenticationForm()
 
     return render(request, "users/signin.html", {"form": form})
 
-@login_required
 def signout_view(request):
-    """Handles user logout."""
+    """Logs out the user."""
     logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect("home")
+    return redirect("home")  # ✅ Redirect to homepage after logout

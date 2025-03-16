@@ -1,12 +1,12 @@
-{% extends "base.html" %}
+<h2>Available Courses</h2>
+<ul>
+    {% for course in courses %}
+        <li>
+            <a href="{% url 'courses:course_detail' course.pk %}">
+                {{ course.display_name|default:course.title }}
+            </a> ({{ course.total_videos }} videos)
+        </li>
+    {% endfor %}
+</ul>
 
-{% block content %}
-    <h1>Available Courses</h1>
-    <ul>
-        {% for course in courses %}
-            <li><a href="{% url 'courses:course_detail' course.id %}">{{ course.name }}</a></li>
-        {% empty %}
-            <li>No courses available.</li>
-        {% endfor %}
-    </ul>
-{% endblock %}
+

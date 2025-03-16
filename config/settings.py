@@ -87,8 +87,10 @@ STATICFILES_DIRS = [
     BASE_DIR / "config/static",  # Add this line if config/static exists
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+
+# ✅ Corrected Video URL and Root Directory
+VIDEO_URL = "/videos/"
+VIDEO_ROOT = os.path.join(BASE_DIR, "videos")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"

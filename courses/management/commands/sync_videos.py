@@ -1,104 +1,80 @@
-from django.core.management.base import BaseCommand
 import os
-import random
-from datetime import timedelta
-from django.utils.timezone import now
+import datetime
+import ffmpeg  # Install with `pip install ffmpeg-python`
+from django.core.management.base import BaseCommand
 from django.conf import settings
 from courses.models import Course, Video
 
-
-VIDEO_DIR = os.path.join(settings.BASE_DIR, "videos")
-
-
 class Command(BaseCommand):
-    help = "Syncs the database with video files in /videos/"
+    help = "Sync videos from the local directory to the database."
 
-    def handle(self, *args, **kwargs):
-        """Main method executed when running the command"""
-        self.sync_videos()
+    def handle(self, *args, **options):
+        # ✅ Define the correct video root directory
+        video_root = os.path.join(settings.BASE_DIR, "videos")  # Ensure this matches your project structure
 
-    def sync_videos(self):
-        """
-        - Adds new courses if a subfolder exists
-        - Adds new videos
-        - Marks missing videos as Inactive instead of deleting
-        - Keeps existing descriptions and display names
-        - Updates course statistics
-        """
-        if not os.path.exists(VIDEO_DIR):
-            self.stdout.write(self.style.WARNING(f"⚠️ Video directory {VIDEO_DIR} does not exist."))
+        if not os.path.exists(video_root):
+            self.stdout.write(self.style.ERROR(f"⚠️ Video root directory {video_root} does not exist."))
             return
 
-        found_courses = set()
-        found_videos = set()
+        self.stdout.write(self.style.SUCCESS(f"📂 Scanning video root directory: {video_root}"))
 
-        self.stdout.write("🔄 Syncing videos...")
-
-        # ✅ Scan subdirectories (each representing a course)
-        for course_folder in sorted(os.listdir(VIDEO_DIR)):
-            course_path = os.path.join(VIDEO_DIR, course_folder)
+        # ✅ Iterate through course directories
+        for course_folder in sorted(os.listdir(video_root)):  # Ensure consistent order
+            course_path = os.path.join(video_root, course_folder)
 
             if not os.path.isdir(course_path):
                 continue  # Skip non-directory files
 
-            # ✅ Ensure the course exists in the database
+            # Find or create a Course
             course, created = Course.objects.get_or_create(
                 title=course_folder,
-                defaults={
-                    "display_name": course_folder,  # ✅ Set display name as folder name initially
-                    "description": f"Auto-created for {course_folder}",
-                }
+                defaults={"display_name": course_folder}
             )
-            found_courses.add(course.id)
 
             if created:
-                self.stdout.write(self.style.SUCCESS(f"🆕 Created course: {course.display_name}"))
+                self.stdout.write(self.style.SUCCESS(f"✅ Created new course: {course_folder}"))
+            else:
+                self.stdout.write(self.style.WARNING(f"⚠️ Course exists: {course_folder}"))
 
-            self.stdout.write(f"📂 Processing course: {course.display_name}")
+            # ✅ Iterate through video files in the course folder
+            video_files = sorted(
+                [f for f in os.listdir(course_path) if f.lower().endswith((".mp4", ".avi", ".mov", ".mkv"))]
+            )
 
-            # ✅ Scan video files
-            video_files = sorted([f for f in os.listdir(course_path) if f.endswith(('.mp4', '.mov', '.avi'))])
-
-            for index, filename in enumerate(video_files, start=1):
+            for index, filename in enumerate(video_files, start=1):  # Assign `video_order`
                 video_path = os.path.join(course_path, filename)
-                video_url = f"/videos/{course_folder}/{filename}"
 
-                # ✅ Ensure the video exists in the database
-                video, created = Video.objects.get_or_create(
+                # Extract video metadata
+                display_name = os.path.splitext(filename)[0]
+                duration = self.get_video_duration(video_path)
+
+                # Add or update the video in the database
+                video, created = Video.objects.update_or_create(
                     course=course,
-                    title=filename,  # ✅ Store filename as title
-                    video_order=index,
+                    title=filename,
                     defaults={
-                        "display_name": os.path.splitext(filename)[0],  # ✅ Set display_name initially
-                        "duration": timedelta(minutes=random.randint(5, 20)),  # Placeholder duration
-                        "video_url": video_url,
-                        "status": "Active",
-                        "access_type": "Restricted",
-                        "author": "James",
-                        "added_at": now(),
+                        "display_name": display_name,
+                        "duration": duration,
+                        "video_url": f"/videos/{course_folder}/{filename}",  # Static serving URL
+                        "video_order": index,  # ✅ Assign video order correctly
                     }
                 )
 
                 if created:
-                    self.stdout.write(self.style.SUCCESS(f"🎥 Added video: {video.display_name} (Order: {video.video_order})"))
+                    self.stdout.write(self.style.SUCCESS(f"✅ Added video: {filename} (~{duration} mins, Order {index})"))
                 else:
-                    video.status = "Active"
-                    video.video_url = video_url
-                    video.save()
-                    self.stdout.write(self.style.SUCCESS(f"✅ Updated video: {video.display_name} (Order: {video.video_order})"))
+                    self.stdout.write(self.style.WARNING(f"⚠️ Updated video: {filename} (~{duration} mins, Order {index})"))
 
-                found_videos.add(video.id)
+        self.stdout.write(self.style.SUCCESS("🎉 Video sync completed successfully!"))
 
-            # ✅ Mark missing videos as Inactive
-            existing_videos = Video.objects.filter(course=course, status="Active")
-            for vid in existing_videos:
-                if vid.id not in found_videos:
-                    vid.status = "Inactive"
-                    vid.save()
-                    self.stdout.write(self.style.WARNING(f"⚠️ Marked Inactive: {vid.display_name}"))
+    def get_video_duration(self, video_path):
+        """Extract the duration of a video file using ffmpeg and return in rounded minutes."""
+        try:
+            probe = ffmpeg.probe(video_path)
+            duration_seconds = float(probe["format"]["duration"])  # Get total duration in seconds
+            duration_minutes = round(duration_seconds / 60)  # Convert to minutes and round
 
-            # ✅ Update course stats
-            course.update_video_stats()
-            self.stdout.write(self.style.SUCCESS(f"📊 Updated Course Stats: {course.display_name} - {course.total_videos} Videos"))
-
-        self.stdout.write(self.style.SUCCESS("✅ Video sync completed!"))
+            return f"{duration_minutes} mins"  # ✅ Fix: Ensure only one `~`
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"❌ Failed to get duration for {video_path}: {e}"))
+            return "~30 mins"  # Default fallback duration
